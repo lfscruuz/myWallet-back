@@ -96,10 +96,26 @@ app.get("/registry", async (req, res) =>{
     try {
         const sessions = await sessionsCollection.findOne({token});
         const user = await usersCollection.findOne({_id: sessions.userId});
-        console.log(user._id)
         const registry = await registryCollection.find({userId: user._id}).toArray();
-        console.log(registry)
         return res.send(registry);
+    } catch (error) {
+        return res.sendStatus(500);
+    };
+});
+
+app.delete("/sign-out", async (req, res) =>{
+    const {authorization} = req.headers;
+    const token = authorization?.replace("Bearer ", "");
+    if (!token){
+        return res.sendStatus(401);
+    };
+
+    try {
+        const sessions = await sessionsCollection.findOne({token});
+        if (sessions){
+            await sessionsCollection.deleteOne({token})
+        }
+        return res.sendStatus(200)
     } catch (error) {
         return res.sendStatus(500);
     };
