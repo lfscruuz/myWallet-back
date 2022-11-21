@@ -40,7 +40,7 @@ export async function sessionsSchemaValidation(req, res, next) {
     if (!foundUser) {
         return res.status(401).send("usuário não encontrado");
     };
-    const comparePasswords = bcrypt.compare(password, foundUser.password);
+    const comparePasswords = bcrypt.compareSync(password, foundUser.password);
     if (!comparePasswords) {
         return res.sendStatus(401)
     };
